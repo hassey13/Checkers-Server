@@ -7,6 +7,7 @@ io.on('connection', function(socket){
   console.log('New User connected!')
 
   socket.on('move', function( board ){
+    console.log('emitting move')
     io.emit('move', board )
   })
 })
