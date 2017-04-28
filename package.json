@@ -4,21 +4,23 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "react-scripts test --env=jsdom",
-    "start": "node server.js",
-    "build": "react-scripts build",
-    "eject": "react-scripts eject"
+    "test": "NODE_ENV=test nodemon --exec 'mocha --recursive -R min'",
+    "start": "node server.js"
   },
   "author": "Eric Hasselbring",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.15.3",
+    "body-parser": "^1.17.1",
     "express": "^4.15.2",
     "fs": "0.0.1-security",
     "http-server": "^0.9.0",
+    "mocha": "^3.3.0",
+    "mongoose": "^4.9.6",
     "path": "^0.12.7",
     "socket.io": "^1.7.2",
-    "socket.io-client": "^1.7.2"
+    "socket.io-client": "^1.7.2",
+    "supertest": "^3.0.0"
   },
   "devDependencies": {
     "react-scripts": "0.9.0",
