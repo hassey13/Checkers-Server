@@ -12,8 +12,8 @@ before( done => {
 })
 
 beforeEach( done => {
-  const { users } = mongoose.connection.collections
-  users.drop()
+  const { users, boards } = mongoose.connection.collections
+  Promise.all([users.drop(), boards.drop()])
     .then(()=>done())
     .catch(()=>done())
 })

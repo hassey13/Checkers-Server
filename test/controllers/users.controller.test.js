@@ -11,7 +11,7 @@ describe('Users Controller', () => {
     User.count()
       .then(count => {
         request(app)
-        .post('/users')
+        .post('/api/users')
         .send({username: 'eric'})
         .end(() => {
           User.count().then(newCount => {
@@ -20,12 +20,11 @@ describe('Users Controller', () => {
           })
         });
       })
-      .catch( err => console.warn('Warning', err))
   })
 
-  it('Post to /users requires a username', (done) => {
+  xit('Post to /users requires a username', (done) => {
     request(app)
-      .post('/users')
+      .post('/api/users')
       .send({})
       .end((err, res) => {
         assert(res.body.error)

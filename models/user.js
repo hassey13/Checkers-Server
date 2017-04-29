@@ -12,6 +12,10 @@ const UserSchema = new Schema ({
   }
 })
 
+UserSchema.virtual('nameLength').get(function() {
+  return this.username.length;
+})
+
 const User = mongoose.model('user', UserSchema)
 
 module.exports = User

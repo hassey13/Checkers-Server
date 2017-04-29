@@ -7,5 +7,12 @@ module.exports = {
     User.create(userProps)
       .then( user => res.send({ user }))
       .catch( next )
+  },
+  show(req, res, next) {
+    const username = req.params.username
+
+    User.findOne({ username: username})
+      .then( user => res.send({ user }))
+      .catch( next )
   }
 }
