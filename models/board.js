@@ -5,8 +5,17 @@ const UserSchema = require('./user');
 const PieceSchema = require('./piece');
 
 const BoardSchema = new Schema ({
+  pending: {
+    type: Boolean,
+    default: true
+  },
+  accepted: {
+    type: Boolean,
+    default: false
+  },
   turn: {
-    type: String
+    type: String,
+    default: 'blue'
   },
   players: [{
     type: Schema.Types.ObjectId,

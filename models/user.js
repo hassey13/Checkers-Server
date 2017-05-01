@@ -5,8 +5,8 @@ const UserSchema = new Schema ({
   username: {
     type: String,
     validate: {
-      validator: (name) => name.length > 2,
-      message: 'Name must be longer than 2 characters.'
+      validator: (name) => name.length > 1,
+      message: 'Name must be longer than 1 characters.'
     },
     required: [true, 'Name is required.']
   }

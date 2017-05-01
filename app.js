@@ -33,6 +33,11 @@ io.on('connection', function(socket){
     console.log('emitting move')
     io.emit('move', board )
   })
+
+  socket.on('invite', function( invite ){
+    console.log('emitting invite')
+    io.emit('invite', invite )
+  })
 })
 
 
