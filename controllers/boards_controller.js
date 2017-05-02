@@ -16,17 +16,23 @@ module.exports = {
       .then( () => {
         User.findOne({ username: boardProps.challengee})
           .then( user => {
-            game.players.push( user )
+
+            new Promise( (resolve, reject) => {
+              game.players.push( user )
+              setInterval( () => {
+                if ( game.players.length === 2 ) {
+                  resolve()
+                }
+              }, 10)
           })
-      })
         .then( () => {
-          // Needs to be refactored
-          setTimeout( () => {
-            game.save()
+
+          game.save()
             .then( board => res.send({ board }))
             .catch( next )
-          }, 100)
         })
+      })
+    })
 
   },
   find(req, res, next) {
@@ -42,6 +48,19 @@ module.exports = {
           }
         })
         res.send( array )
+      })
+  },
+  findById(req, res, next) {
+    const id = req.params.id
+
+    Board.find({ '_id' : id})
+      .populate('players')
+      .then( board => {
+        res.send( board )
+      })
+      .catch( (err) => {
+        console.log(err)
+        console.log(err.message)
       })
   }
 }

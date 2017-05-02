@@ -13,8 +13,8 @@ const bodyParser = require('body-parser')
 const routes = require('./routes/routes')
 
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Origin", "*")
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
   next()
 })
 
@@ -36,7 +36,14 @@ io.on('connection', function(socket){
 
   socket.on('invite', function( invite ){
     console.log('emitting invite')
+    console.log(invite)
     io.emit('invite', invite )
+  })
+
+  socket.on('acceptedInvite', function( invite ){
+    console.log('we have a match!')
+    console.log(invite)
+    io.emit('acceptedInvite', invite )
   })
 })
 
