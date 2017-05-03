@@ -27,21 +27,17 @@ app.use( (err, req, res, next) => {
 })
 
 io.on('connection', function(socket){
-  console.log('New User connected!')
 
   socket.on('move', function( board ){
-    console.log('emitting move')
     io.emit('move', board )
   })
 
   socket.on('invite', function( invite ){
-    console.log('emitting invite')
     console.log(invite)
     io.emit('invite', invite )
   })
 
   socket.on('acceptedInvite', function( invite ){
-    console.log('we have a match!')
     console.log(invite)
     io.emit('acceptedInvite', invite )
   })

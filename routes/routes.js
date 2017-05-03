@@ -6,6 +6,7 @@ module.exports = ( app ) => {
   app.post('/api/users', UsersController.create )
 
   app.get('/api/boards/:id', BoardsController.findById )
+  app.post('/api/boards/:id', BoardsController.update )
   app.get('/api/boards/users/:username', BoardsController.find )
 
   app.post('/api/boards', BoardsController.create )

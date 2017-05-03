@@ -35,6 +35,31 @@ module.exports = {
     })
 
   },
+  update(req, res, next) {
+    const id = req.params.id
+    const boardProps = req.body;
+    let board;
+
+    Board.find({ '_id' : id})
+      .populate('players')
+      .then( results => {
+        board = results[0]
+      })
+      .then( () => {
+        if ( 'accepted' in boardProps ) {
+          board.set('accepted', boardProps.accepted)
+          board.set('pending', false)
+        }
+        if ( 'piece' in boardProps ) {
+          console.log('received move!')
+        }
+        board.save()
+          .then( ( savedBoard ) => {
+            res.send( savedBoard )
+          })
+      })
+
+  },
   find(req, res, next) {
     const username = req.params.username
 
@@ -43,7 +68,7 @@ module.exports = {
       .populate('players')
       .then( results => {
         results.map( game => {
-          if ( game.players.length > 1 && game.players[0].username === username ) {
+          if ( (game.players.length > 1 && game.players[0].username === username) || (game.players.length > 1 && game.players[1].username === username) ) {
             array.push(game)
           }
         })
