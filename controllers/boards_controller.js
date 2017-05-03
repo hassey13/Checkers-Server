@@ -41,7 +41,7 @@ module.exports = {
     let board;
 
     Board.find({ '_id' : id})
-      .populate('players')
+      .populate('pieces')
       .then( results => {
         board = results[0]
       })
@@ -51,12 +51,19 @@ module.exports = {
           board.set('pending', false)
         }
         if ( 'piece' in boardProps ) {
-          console.log('received move!')
+          let piece = board.pieces.filter( (piece, i) => piece.id === boardProps.piece.id && piece.color === boardProps.piece.color )[0]
+
+          for( key in boardProps.piece ) {
+            piece.set(key, boardProps.piece[key])
+          }
+          piece.save()
         }
+
         board.save()
-          .then( ( savedBoard ) => {
-            res.send( savedBoard )
-          })
+        .then( ( savedBoard ) => {
+          res.send( savedBoard )
+        })
+
       })
 
   },
