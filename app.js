@@ -8,8 +8,8 @@ mongoose.Promise = global.Promise
 if ( process.env.NODE_ENV !== 'test') {
   // mongoose.connect('mongodb://localhost/checkers')
   // mongoose.connect('mongodb://https://www.react-checkers-server.herokuapp.com')
-  // mongoose.connect(`mongodb://${process.env.dbuser}:${process.env.dbpw}@ds131151.mlab.com:31151/react-checkers-server`)
-  mongoose.connect(`mongodb://ehass:Kuuu4lii1@ds131151.mlab.com:31151/react-checkers-server`)
+  console.log(process.env.dbuser)
+  mongoose.connect(`mongodb://${process.env.dbuser}:${process.env.dbpw}@ds131151.mlab.com:31151/react-checkers-server`)
     .then( () => { console.log('connected')})
     .catch( (err) => { console.log(err)})
 }
