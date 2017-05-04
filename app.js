@@ -33,12 +33,10 @@ io.on('connection', function(socket){
   })
 
   socket.on('invite', function( invite ){
-    console.log(invite)
     io.emit('invite', invite )
   })
 
   socket.on('acceptedInvite', function( invite ){
-    console.log(invite)
     io.emit('acceptedInvite', invite )
   })
 })

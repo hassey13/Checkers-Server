@@ -1,15 +1,74 @@
 const Board = require('../models/board')
 const User = require('../models/user')
+const Piece = require('../models/piece')
 
 module.exports = {
   create(req, res, next) {
     const boardProps = req.body
-    const game = new Board()
+    const board = new Board()
+
+    let count = 1
+    for (let i = 0; i < 24; i+=2) {
+      if ( Math.floor(i / 8) % 2 === 0 ) {
+
+        let piece = new Piece({
+          id: count,
+          color: 'blue',
+          cellId: i
+        })
+
+        piece.save()
+          .then( () => {
+            board.pieces.push(piece)
+          })
+        count++
+      }
+      else {
+
+        let piece = new Piece({
+          id: count,
+          color: 'blue',
+          cellId: i+1
+        })
+        piece.save()
+          .then( () => {
+            board.pieces.push(piece)
+          })
+        count++
+      }
+    }
+    count = 1
+    for (let i = 63; i >= 64 - 24; i-=2) {
+        if ( Math.floor(i / 8) % 2 === 0 ) {
+          let piece = new Piece({
+            id: count,
+            color: 'red',
+            cellId: i-1
+          })
+          piece.save()
+            .then( () => {
+              board.pieces.push(piece)
+            })
+          count++
+        }
+        else {
+          let piece = new Piece({
+            id: count,
+            color: 'red',
+            cellId: i
+          })
+          piece.save()
+            .then( () => {
+              board.pieces.push(piece)
+            })
+          count++
+        }
+    }
 
     new Promise( (resolve, reject) => {
       User.findOne({ username: boardProps.challenger})
       .then( user => {
-        game.players.push( user )
+        board.players.push( user )
         resolve()
       })
     })
@@ -18,17 +77,19 @@ module.exports = {
           .then( user => {
 
             new Promise( (resolve, reject) => {
-              game.players.push( user )
+              board.players.push( user )
               setInterval( () => {
-                if ( game.players.length === 2 ) {
+                if ( board.players.length === 2 ) {
                   resolve()
                 }
               }, 10)
           })
         .then( () => {
 
-          game.save()
-            .then( board => res.send({ board }))
+          board.save()
+            .then( game =>{
+              let board = game
+              res.send({ board })})
             .catch( next )
         })
       })
@@ -49,6 +110,9 @@ module.exports = {
         if ( 'accepted' in boardProps ) {
           board.set('accepted', boardProps.accepted)
           board.set('pending', false)
+        }
+        if ( 'turn' in boardProps ) {
+          board.set('turn', boardProps.turn)
         }
         if ( 'piece' in boardProps ) {
           let piece = board.pieces.filter( (piece, i) => piece.id === boardProps.piece.id && piece.color === boardProps.piece.color )[0]
@@ -73,6 +137,7 @@ module.exports = {
     var array = []
     Board.find()
       .populate('players')
+      .populate('pieces')
       .then( results => {
         results.map( game => {
           if ( (game.players.length > 1 && game.players[0].username === username) || (game.players.length > 1 && game.players[1].username === username) ) {
@@ -87,6 +152,7 @@ module.exports = {
 
     Board.find({ '_id' : id})
       .populate('players')
+      .populate('pieces')
       .then( board => {
         res.send( board )
       })

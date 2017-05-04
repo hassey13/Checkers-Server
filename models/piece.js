@@ -9,7 +9,8 @@ const PieceSchema = new Schema ({
     type: String
   },
   king: {
-    type: Boolean
+    type: Boolean,
+    default: false
   },
   cellId: {
     type: Number

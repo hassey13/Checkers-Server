@@ -9,7 +9,7 @@ const Piece = mongoose.model('piece')
 
 describe('Boards Controller', () => {
 
-  it('Post request to /users creates a new board', done => {
+  it('Post request to /boards creates a new board', done => {
     Board.count()
       .then(count => {
         request(app)
@@ -21,6 +21,27 @@ describe('Boards Controller', () => {
         .end(() => {
           Board.count().then(newCount => {
             assert(count + 1 === newCount)
+            done()
+          });
+        });
+      });
+  });
+
+  it('Post request to /boards creates a new board with 24 pieces', done => {
+
+    Board.count()
+      .then(count => {
+        request(app)
+        .post('/api/boards')
+        .send({
+          challenger: 'eric',
+          challengee: 'alanna'
+        })
+        .end(() => {
+          Board.find()
+          .populate('pieces')
+          .then( boards => {
+            assert( boards[0].pieces.length === 24 )
             done()
           });
         });
