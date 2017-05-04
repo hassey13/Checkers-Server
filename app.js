@@ -6,7 +6,7 @@ const mongoose = require('mongoose')
 
 mongoose.Promise = global.Promise
 if ( process.env.NODE_ENV !== 'test') {
-  mongoose.connect('mongodb://localhost/checkers')
+  mongoose.connect('mongodb://https://www.react-checkers-server.herokuapp.com')
 }
 
 const bodyParser = require('body-parser')
