@@ -8,6 +8,8 @@ mongoose.Promise = global.Promise
 if ( process.env.NODE_ENV !== 'test') {
   // mongoose.connect('mongodb://localhost/checkers')
   mongoose.connect(`mongodb://${process.env.dbuser}:${process.env.dbpw}@ds131151.mlab.com:31151/react-checkers-server`)
+  console.log(process.env.dbuser)
+  console.log(process.env.dbpw)
     .then( () => true )
     .catch( (err) => { console.log(err)})
 }
