@@ -7,7 +7,7 @@ const mongoose = require('mongoose')
 mongoose.Promise = global.Promise
 if ( process.env.NODE_ENV !== 'test') {
   // mongoose.connect('mongodb://localhost/checkers')
-  mongoose.connect(`mongodb://temp:temp@ds131151.mlab.com:31151/react-checkers-server`)
+  mongoose.connect(`mongodb://${process.env.dbuser}:${process.env.dbpw}@ds131151.mlab.com:31151/react-checkers-server`)
     .then( () => true )
     .catch( (err) => { console.log(err)})
 }
