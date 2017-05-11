@@ -8,6 +8,11 @@ module.exports = {
       .then( user => res.send({ user }))
       .catch( next )
   },
+  index(req, res, next) {
+    User.find()
+      .then( users => res.send({ users }))
+      .catch( next )
+  },
   show(req, res, next) {
     const username = req.params.username
 

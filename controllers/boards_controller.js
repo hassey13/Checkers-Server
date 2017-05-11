@@ -160,5 +160,11 @@ module.exports = {
         console.log(err)
         console.log(err.message)
       })
+  },
+  index(req, res, next) {
+    Board.find()
+      .populate('players')
+        .then( boards => res.send({ boards }))
+        .catch( next )
   }
 }
