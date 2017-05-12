@@ -88,7 +88,7 @@ describe('Boards Controller', () => {
           board.players.push(alanna);
           setInterval( () => {
             if ( board.players.length === 2 ) {
-              resolve()
+              resolve();
             }
           }, 10);
         })
@@ -124,7 +124,7 @@ describe('Boards Controller', () => {
 
           setInterval( () => {
             if ( board.pieces.length === 1 ) {
-              resolve()
+              resolve();
             }
           }, 10);
         })
@@ -166,7 +166,7 @@ describe('Boards Controller', () => {
 
           setInterval( () => {
             if ( board.pieces.length === 1 ) {
-              resolve()
+              resolve();
             }
           }, 10);
         })
@@ -193,9 +193,23 @@ describe('Boards Controller', () => {
           });
         });
       });
+    }, 1000);
+  });
 
-    }, 1000)
+  it('can take in a query string and return the correct results', done => {
+    let query = 'lastUpdated=5-12-2017,turn=blue';
 
-  })
+    const board = new Board();
+    board.turn = 'blue'
 
-})
+    board.save()
+      .then( () => {
+        request(app)
+          .get(`/api/boards/query/${query}`)
+          .end( (err, result) => {
+            assert.equal(result.body[0].turn, 'blue');
+            done();
+          });
+        });
+    });
+});

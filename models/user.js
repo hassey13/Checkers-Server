@@ -13,11 +13,11 @@ const UserSchema = new Schema ({
   },
   createdAt: {
     type: Date,
-    default: moment()
+    default: new Date()
   },
   lastUpdated: {
     type: Date,
-    default: moment()
+    default: new Date()
   }
 })
 

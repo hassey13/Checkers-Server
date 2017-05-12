@@ -25,14 +25,14 @@ describe('Creating board records: ', () => {
     function convertDate(inputFormat) {
       function pad(s) { return (s < 10) ? '0' + s : s; }
         let d = new Date(inputFormat);
-      return [d.getMonth()+1, pad(d.getDate()), d.getFullYear()].join('/');
+      return [d.getMonth()+1, pad(d.getDate()), d.getFullYear()].join('-');
     }
 
     game.save()
       .then(() => {
         Board.find()
           .then( board => {
-            assert( convertDate(board[0].createdAt) === moment().format('l'))
+            assert( convertDate(board[0].createdAt) === moment().format('l').split('/').join('-'))
             done()
            })
       })
