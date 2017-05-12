@@ -1,6 +1,12 @@
+
 const Board = require('../models/board')
 const User = require('../models/user')
 const Piece = require('../models/piece')
+
+const moment = require('moment')
+
+const Helpers = require('../helpers/boardControllerHelpers')
+const DateHelpers = require('../helpers/dateHelpers')
 
 module.exports = {
   create(req, res, next) {
@@ -120,6 +126,7 @@ module.exports = {
           for( key in boardProps.piece ) {
             piece.set(key, boardProps.piece[key])
           }
+          board.set('lastUpdated', moment())
           piece.save()
         }
 
@@ -155,6 +162,42 @@ module.exports = {
       .populate('pieces')
       .then( board => {
         res.send( board )
+      })
+      .catch( (err) => {
+        console.log(err)
+        console.log(err.message)
+      })
+  },
+  query(req, res, next) {
+    const query = req.params.query
+
+    let parsedQuery = Helpers.parseQuery( query )
+
+    Board.find()
+      .populate('players')
+      .populate('pieces')
+      .then( boards => {
+        if ( Object.keys( parsedQuery ).length === 0 ) {
+          res.send( {} )
+          return
+        }
+        if ( Object.keys( parsedQuery ).length > 0 ) {
+          let filteredResults = boards
+
+          for (let key in parsedQuery) {
+            filteredResults = filteredResults.filter( (board, i) => {
+              if ( DateHelpers.convertDate(new Date( board[key] )) === parsedQuery[key] ) {
+                return true
+              }
+
+              return board[key] === parsedQuery[key];
+            })
+          }
+
+          res.send( filteredResults )
+          return
+        }
+        res.send( res.status(500).send('Query function failure, check your query syntax and try again.') )
       })
       .catch( (err) => {
         console.log(err)

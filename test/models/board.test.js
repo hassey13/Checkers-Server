@@ -1,10 +1,11 @@
 const assert = require('assert')
 const mongoose = require('mongoose')
+const moment = require('moment')
 
 const Board = require('../../models/board')
 const User = require('../../models/user')
 
-describe('Creating records', () => {
+describe('Creating board records: ', () => {
   it('saves a board', done => {
     const game = new Board({
       turn: 'blue'
@@ -13,6 +14,27 @@ describe('Creating records', () => {
       .then(() => {
         assert(!game.isNew)
         done()
+      })
+  })
+
+  it('sets date when created', done => {
+    const game = new Board({
+      turn: 'blue'
+    })
+
+    function convertDate(inputFormat) {
+      function pad(s) { return (s < 10) ? '0' + s : s; }
+        let d = new Date(inputFormat);
+      return [d.getMonth()+1, pad(d.getDate()), d.getFullYear()].join('-');
+    }
+
+    game.save()
+      .then(() => {
+        Board.find()
+          .then( board => {
+            assert( convertDate(board[0].createdAt) === moment().format('l').split('/').join('-'))
+            done()
+           })
       })
   })
 
@@ -29,11 +51,11 @@ describe('Creating records', () => {
     game.players.push(alanna)
     game.save()
       .then(() => {
-        Board.findOne({turn: 'blue'})
+        Board.find()
           .populate('players')
-          .then( gameFound => {
-            assert( gameFound.players[0].username === 'Eric' )
-            assert( gameFound.players[1].username === 'Alanna' )
+          .then( board => {
+            assert( board[0].players[0].username === 'Eric' )
+            assert( board[0].players[1].username === 'Alanna' )
           done()
         })
       })

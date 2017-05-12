@@ -22,13 +22,4 @@ describe('Users Controller', () => {
       })
   })
 
-  xit('Post to /users requires a username', (done) => {
-    request(app)
-      .post('/api/users')
-      .send({})
-      .end((err, res) => {
-        assert(res.body.error)
-        done()
-      })
-    })
 })
