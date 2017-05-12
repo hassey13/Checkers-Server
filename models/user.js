@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const moment = require('moment')
 const Schema = mongoose.Schema
 
 const UserSchema = new Schema ({
@@ -9,6 +10,14 @@ const UserSchema = new Schema ({
       message: 'Name must be longer than 1 characters.'
     },
     required: [true, 'Name is required.']
+  },
+  createdAt: {
+    type: Date,
+    default: moment()
+  },
+  lastUpdated: {
+    type: Date,
+    default: moment()
   }
 })
 

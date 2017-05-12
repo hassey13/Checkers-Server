@@ -1,6 +1,11 @@
+
 const Board = require('../models/board')
 const User = require('../models/user')
 const Piece = require('../models/piece')
+
+const moment = require('moment')
+
+const Helpers = require('../helpers/boardControllerHelpers')
 
 module.exports = {
   create(req, res, next) {
@@ -120,6 +125,7 @@ module.exports = {
           for( key in boardProps.piece ) {
             piece.set(key, boardProps.piece[key])
           }
+          board.set('lastUpdated', moment())
           piece.save()
         }
 
@@ -151,6 +157,22 @@ module.exports = {
     const id = req.params.id
 
     Board.find({ '_id' : id})
+      .populate('players')
+      .populate('pieces')
+      .then( board => {
+        res.send( board )
+      })
+      .catch( (err) => {
+        console.log(err)
+        console.log(err.message)
+      })
+  },
+  query(req, res, next) {
+    const query = req.params.query
+
+    let parsedQuery = Helpers.parseQuery( query )
+
+    Board.find( parsedQuery )
       .populate('players')
       .populate('pieces')
       .then( board => {

@@ -2,6 +2,7 @@ const assert = require('assert')
 const request = require('supertest')
 const app = require('../../app')
 const mongoose = require('mongoose')
+const moment = require('moment')
 
 const Board = mongoose.model('board')
 const User = mongoose.model('user')
@@ -151,6 +152,50 @@ describe('Boards Controller', () => {
             });
         });
       });
+  })
+
+  it('updates date when move takes place', done => {
+    const piece = new Piece({ id: 1, color: 'blue', king: false, cellId: 9 });
+    const board = new Board();
+
+    setTimeout(  () => {
+      Promise.all([piece.save()])
+      .then( () => {
+        new Promise((resolve, reject) => {
+          board.pieces.push(piece);
+
+          setInterval( () => {
+            if ( board.pieces.length === 1 ) {
+              resolve()
+            }
+          }, 10);
+        })
+        .then( () => {
+          board.save()
+            .then( () => {
+              request(app)
+              .post(`/api/boards/${board._id.toString()}`)
+              .send({
+                piece: {
+                  id: 1,
+                  color: 'blue',
+                  king: true,
+                  cellId: 1
+                }
+              })
+              .end(() => {
+                Board.find()
+                  .then( boards => {
+                    assert( boards[0].lastUpdated.toLocaleTimeString() !== boards[0].createdAt.toLocaleTimeString() )
+                    done()
+                  });
+              });
+          });
+        });
+      });
+
+    }, 1000)
+
   })
 
 })
