@@ -18,6 +18,10 @@ const BoardSchema = new Schema ({
     type: String,
     default: 'blue'
   },
+  winner: {
+    type: String,
+    default: ''
+  },
   players: [{
     type: Schema.Types.ObjectId,
     ref: 'user'

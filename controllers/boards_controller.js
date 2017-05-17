@@ -120,6 +120,9 @@ module.exports = {
         if ( 'turn' in boardProps ) {
           board.set('turn', boardProps.turn)
         }
+        if ( 'winner' in boardProps ) {
+          board.set('winner', boardProps.winner)
+        }
         if ( 'piece' in boardProps ) {
           let piece = board.pieces.filter( (piece, i) => piece.id === boardProps.piece.id && piece.color === boardProps.piece.color )[0]
 

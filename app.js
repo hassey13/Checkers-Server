@@ -35,6 +35,10 @@ io.on('connection', function(socket){
     io.emit('move', board )
   })
 
+  socket.on('resign', function( resignation ){
+    io.emit('resign', resignation )
+  })
+
   socket.on('invite', function( invite ){
     io.emit('invite', invite )
   })
