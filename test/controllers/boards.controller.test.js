@@ -7,51 +7,68 @@ const moment = require('moment')
 const Board = mongoose.model('board')
 const User = mongoose.model('user')
 const Piece = mongoose.model('piece')
+const Helpers = require('../../helpers/dateHelpers.js');
+
 
 describe('Boards Controller', () => {
 
   it('Post request to /boards creates a new board', done => {
-    Board.count()
-      .then(count => {
-        request(app)
-        .post('/api/boards')
-        .send({
-          challenger: 'eric',
-          challengee: 'alanna'
-        })
-        .end(() => {
-          Board.count().then(newCount => {
-            assert(count + 1 === newCount)
-            done()
+    const Eric = new User({ username: 'Eric' })
+    Eric.save()
+      .then( () => {
+        const alanna = new User({ username: 'alanna' })
+        alanna.save()
+          .then( () => {
+            Board.count()
+              .then(count => {
+                request(app)
+                .post('/api/boards')
+                .send({
+                  challenger: 'Eric',
+                  challengee: 'alanna'
+                })
+                .end(() => {
+                  Board.count().then(newCount => {
+                    assert(count + 1 === newCount)
+                    done()
+                  });
+                });
+              });
           });
-        });
       });
   });
 
   it('Post request to /boards creates a new board with 24 pieces', done => {
-
-    Board.count()
-      .then(count => {
-        request(app)
-        .post('/api/boards')
-        .send({
-          challenger: 'eric',
-          challengee: 'alanna'
-        })
-        .end(() => {
-          Board.find()
-          .populate('pieces')
-          .then( boards => {
-            assert( boards[0].pieces.length === 24 )
-            done()
+    const Eric = new User({ username: 'Eric' })
+    Eric.save()
+      .then( () => {
+        const alanna = new User({ username: 'alanna' })
+        alanna.save()
+          .then( () => {
+            Board.count()
+            .then(count => {
+              request(app)
+              .post('/api/boards')
+              .send({
+                challenger: 'Eric',
+                challengee: 'alanna'
+              })
+              .end(() => {
+                Board.find()
+                .populate('pieces')
+                .then( boards => {
+                  assert( boards[0].pieces.length === 24 )
+                  done()
+                });
+              });
+            });
           });
-        });
       });
   });
 
   it('Post request to /users creates a new board with players', done => {
-    const eric = new User({ username: 'eric' })
-    eric.save()
+    const Eric = new User({ username: 'Eric' })
+    Eric.save()
       .then( () => {
         const alanna = new User({ username: 'alanna' })
         alanna.save()
@@ -59,7 +76,7 @@ describe('Boards Controller', () => {
             request(app)
             .post('/api/boards')
             .send({
-              challenger: 'eric',
+              challenger: 'Eric',
               challengee: 'alanna'
             })
             .end(() => {
@@ -104,6 +121,82 @@ describe('Boards Controller', () => {
                 Board.find()
                 .then( boards => {
                   assert( boards[0].accepted );
+                  done()
+                });
+              });
+            })
+        })
+      })
+  })
+
+  it('Post request to /board/:id with resign updates a board with a winner that is a user object', done => {
+    const eric = new User({ username: 'eric' });
+    const alanna = new User({ username: 'alanna' });
+
+    let board = new Board()
+
+
+    Promise.all([alanna.save(), eric.save()])
+      .then( () => {
+        new Promise((resolve, reject) => {
+          board.players.push(eric);
+          board.players.push(alanna);
+          setInterval( () => {
+            if ( board.players.length === 2 ) {
+              resolve();
+            }
+          }, 10);
+        })
+        .then( () => {
+          board.save()
+            .then( () => {
+              request(app)
+              .post(`/api/boards/${board._id.toString()}`)
+              .send({
+                resign: eric
+              })
+              .end(() => {
+                Board.find()
+                .populate('winner')
+                .then( boards => {
+                  assert( boards[0].winner[0].username === 'alanna' );
+                  done()
+                });
+              });
+            })
+        })
+      })
+  })
+
+  it('Post request to /board/:id with winner updates a board with a winner that is a user object', done => {
+    const eric = new User({ username: 'eric' });
+    const alanna = new User({ username: 'alanna' });
+    let board = new Board()
+
+    Promise.all([alanna.save(), eric.save()])
+      .then( () => {
+        new Promise((resolve, reject) => {
+          board.players.push(eric);
+          board.players.push(alanna);
+          setInterval( () => {
+            if ( board.players.length === 2 ) {
+              resolve();
+            }
+          }, 10);
+        })
+        .then( () => {
+          board.save()
+            .then( () => {
+              request(app)
+              .post(`/api/boards/${board._id.toString()}`)
+              .send({
+                winner: eric
+              })
+              .end(() => {
+                Board.find()
+                .populate('winner')
+                .then( boards => {
+                  assert( boards[0].winner[0].username === 'eric' );
                   done()
                 });
               });
@@ -197,7 +290,7 @@ describe('Boards Controller', () => {
   });
 
   it('can take in a query string and return the correct results', done => {
-    let query = 'lastUpdated=5-12-2017,turn=blue';
+    let query = `lastUpdated=${ Helpers.convertDate(new Date()) },turn=blue`;
 
     const board = new Board();
     board.turn = 'blue'
